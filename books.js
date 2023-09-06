@@ -1,4 +1,4 @@
-const myLibrary = [];
+let myLibrary = [];
 function Book(title, author, pages, read) {
   this.title = title;
   this.author = author;
@@ -15,43 +15,40 @@ function addBookToLibrary(title, author, pages, read) {
   return newBook;
 }
 
-// const book1 = addBookToLibrary("Atomic Habits", "James Clear", 306, "not read");
-// const book2 = addBookToLibrary(
-//   "The Great Gatsby",
-//   "F. Scott Fitzgerald",
-//   180,
-//   "read"
-// );
-// const book3 = addBookToLibrary(
-//   "To Kill a Mockingbird",
-//   "Harper Lee",
-//   281,
-//   "read"
-// );
-// const book4 = addBookToLibrary("1984", "George Orwell", 328, "not read");
-// const book5 = addBookToLibrary(
-//   "The Catcher in the Rye",
-//   "J.D. Salinger",
-//   224,
-//   "read"
-// );
-
-// const bookList = [book1, book2, book3, book4, book5];
+function removeBookFromLibrary(index) {
+  console.log("removed clicked");
+  myLibrary = myLibrary.filter((book, i) => i !== index);
+}
 
 console.log(myLibrary);
 
 function displayBooks() {
   const table = document.getElementById("bookTable");
+  const newTable = table.cloneNode(false);
 
   myLibrary.forEach((book, index) => {
-    const row = table.insertRow(index + 1);
+    const row = newTable.insertRow(index);
     row.insertCell(0).textContent = book.title;
     row.insertCell(1).textContent = book.author;
     row.insertCell(2).textContent = book.pages;
     row.insertCell(3).textContent = book.read;
+
+    const removeButton = document.createElement("button");
+    removeButton.textContent = "Remove";
+    removeButton.setAttribute("data-index", index);
+    row.insertCell(4).appendChild(removeButton);
+
+    removeButton.addEventListener("click", () => {
+      const bookIndex = parseInt(removeButton.getAttribute("data-index"), 10);
+      if (!isNaN(bookIndex)) {
+        removeBookFromLibrary(bookIndex);
+        displayBooks();
+      }
+    });
   });
+
+  table.parentNode.replaceChild(newTable, table);
 }
-displayBooks();
 
 const form = document.querySelector(".form");
 const addButton = document.getElementById("addButton");
@@ -70,6 +67,10 @@ const onClickAdd = () => {
   console.log("clicked");
   form.style.display = "block";
   isButtonClicked = true;
+};
+
+const onClickRemove = () => {
+  console.log("removed");
 };
 
 addButton.addEventListener("click", onClickAdd);
